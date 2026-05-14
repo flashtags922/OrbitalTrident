@@ -78,26 +78,29 @@ public void onTridentHit(ProjectileHitEvent event) {
 }
     private void spawnOrbitalStrike(Location center) {
 
-        World world = center.getWorld();
+    World world = center.getWorld();
 
-        world.playSound(center, Sound.ENTITY_WITHER_SPAWN, 3.0f, 0.5f);
-        world.strikeLightningEffect(center);
+    world.playSound(center, Sound.ENTITY_WITHER_SPAWN, 3.0f, 0.5f);
+    world.strikeLightningEffect(center);
 
-        for (int i = 0; i < 200; i++) {
+    // MUCH LOWER ENTITY COUNT (performance safe)
+    for (int i = 0; i < 60; i++) {
 
-            double angle = Math.toRadians(i * 1.8);
+        double angle = Math.toRadians(i * 6);
 
-            double radius = 12;
+        double radius = 10;
 
-            double x = Math.cos(angle) * radius;
-            double z = Math.sin(angle) * radius;
+        double x = Math.cos(angle) * radius;
+        double z = Math.sin(angle) * radius;
 
-            Location spawn = center.clone().add(x, 120, z);
+        Location spawn = center.clone().add(x, 100, z);
 
-            TNTPrimed tnt = (TNTPrimed) world.spawnEntity(spawn, EntityType.TNT);
+        TNTPrimed tnt = (TNTPrimed) world.spawnEntity(spawn, EntityType.TNT);
 
-            tnt.setFuseTicks(140);
-            tnt.setYield(8f);
-        }
+        // faster + controlled explosion timing
+        tnt.setFuseTicks(80);
+
+        // slightly stronger per TNT
+        tnt.setYield(6f);
     }
 }
