@@ -2,3 +2,7 @@ name: OrbitalTrident
 version: 1.0
 main: me.anti.orbital.OrbitalTrident
 api-version: 1.21
+
+commands:
+  orbitaltrident:
+    description: Gives orbital trident
