@@ -74,45 +74,45 @@ public class OrbitalTrident extends JavaPlugin implements Listener {
         spawnOrbitalStrike(target);
     }
 
-    private void spawnOrbitalStrike(Location center) {
+   private void spawnOrbitalStrike(Location center) {
 
-        World world = center.getWorld();
+    World world = center.getWorld();
 
-        world.playSound(center, Sound.ENTITY_WITHER_SPAWN, 3.0f, 0.5f);
-        world.strikeLightningEffect(center);
+    world.playSound(center, Sound.ENTITY_WITHER_SPAWN, 3.0f, 0.5f);
+    world.strikeLightningEffect(center);
 
-        int rings = 3;
-        int baseRadius = 6;
-        int tntPerRing = 18;
+    int rings = 3;
+    int baseRadius = 6;
+    int tntPerRing = 16;
 
-        for (int r = 0; r < rings; r++) {
+    for (int r = 0; r < rings; r++) {
 
-            int radius = baseRadius + (r * 5);
+        int radius = baseRadius + (r * 5);
 
-            for (int i = 0; i < tntPerRing; i++) {
+        for (int i = 0; i < tntPerRing; i++) {
 
-                double angle = (2 * Math.PI / tntPerRing) * i;
+            double angle = (2 * Math.PI / tntPerRing) * i;
 
-                double x = Math.cos(angle) * radius;
-                double z = Math.sin(angle) * radius;
+            double x = Math.cos(angle) * radius;
+            double z = Math.sin(angle) * radius;
 
-                Location spawn = center.clone().add(x, 90, z);
+            Location spawn = center.clone().add(x, 80, z);
 
-                TNTPrimed tnt = (TNTPrimed) world.spawnEntity(spawn, EntityType.TNT);
+            TNTPrimed tnt = (TNTPrimed) world.spawnEntity(spawn, EntityType.TNT);
 
-                // force downward fall so it hits ground first
-                tnt.setVelocity(new Vector(0, -1.2, 0));
+            // IMPORTANT FIX:
+            // don't force velocity (it breaks natural explosion timing)
+            tnt.setFuseTicks(60);
 
-                // safe fuse so it doesn't explode mid-air
-                tnt.setFuseTicks(100);
-
-                tnt.setYield(5.5f);
-            }
+            // stronger explosion = visible craters
+            tnt.setYield(6.5f);
         }
-
-        // final main explosion
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            world.createExplosion(center, 9f, false, false);
-        }, 60L);
     }
+
+    // BIG CENTER CRATER (this is what you were missing)
+    Bukkit.getScheduler().runTaskLater(this, () -> {
+
+        world.createExplosion(center, 12f, true, true);
+
+    }, 70L);
 }
