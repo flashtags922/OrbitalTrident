@@ -60,26 +60,28 @@ public class OrbitalTrident extends JavaPlugin implements Listener {
 
         World world = center.getWorld();
 
-        for (int i = 0; i < 40; i++) {
+        world.playSound(center, Sound.ENTITY_WITHER_SPAWN, 3.0f, 0.5f);
+        world.strikeLightningEffect(center);
 
-            double angle = Math.toRadians(i * 9);
+        // BIG ORBITAL NUKE
+        for (int i = 0; i < 200; i++) {
 
-            double x = Math.cos(angle) * 5;
-            double z = Math.sin(angle) * 5;
+            double angle = Math.toRadians(i * 1.8);
 
-            // higher spawn so it looks like it's coming from orbit
+            double radius = 12;
+
+            double x = Math.cos(angle) * radius;
+            double z = Math.sin(angle) * radius;
+
             Location spawn = center.clone().add(x, 120, z);
 
-            TNTPrimed tnt =
-                    (TNTPrimed) world.spawnEntity(
-                            spawn,
-                            EntityType.TNT
-                    );
+            TNTPrimed tnt = (TNTPrimed) world.spawnEntity(spawn, EntityType.TNT);
 
-            // longer fuse so TNT reaches ground first
-            tnt.setFuseTicks(140);
+            // long fuse so it always hits ground first
+            tnt.setFuseTicks(999);
 
-            tnt.setYield(8f);
+            // stronger explosion
+            tnt.setYield(10f);
         }
     }
 }
