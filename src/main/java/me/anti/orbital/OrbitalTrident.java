@@ -3,9 +3,7 @@ package me.anti.orbital;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,8 +12,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.Vector;
-import org.bukkit.Bukkit;
 
 public class OrbitalTrident extends JavaPlugin implements Listener {
 
@@ -56,6 +52,7 @@ public class OrbitalTrident extends JavaPlugin implements Listener {
     public void onTridentHit(ProjectileHitEvent event) {
 
         if (!(event.getEntity() instanceof Trident)) return;
+
         Trident trident = (Trident) event.getEntity();
 
         if (event.getHitBlock() == null) return;
@@ -74,45 +71,50 @@ public class OrbitalTrident extends JavaPlugin implements Listener {
         spawnOrbitalStrike(target);
     }
 
-   private void spawnOrbitalStrike(Location center) {
+    private void spawnOrbitalStrike(Location center) {
 
-    World world = center.getWorld();
+        World world = center.getWorld();
 
-    world.playSound(center, Sound.ENTITY_WITHER_SPAWN, 3.0f, 0.5f);
-    world.strikeLightningEffect(center);
+        // ⚡ effect start
+        world.playSound(center, Sound.ENTITY_WITHER_SPAWN, 3.0f, 0.6f);
+        world.strikeLightningEffect(center);
 
-    int rings = 3;
-    int baseRadius = 6;
-    int tntPerRing = 16;
+        int rings = 4;        // MORE rings
+        int density = 12;     // points per ring
 
-    for (int r = 0; r < rings; r++) {
+        for (int r = 0; r < rings; r++) {
 
-        int radius = baseRadius + (r * 5);
+            double radius = 5 + (r * 4);
 
-        for (int i = 0; i < tntPerRing; i++) {
+            for (int i = 0; i < density; i++) {
 
-            double angle = (2 * Math.PI / tntPerRing) * i;
+                double angle = (2 * Math.PI / density) * i;
 
-            double x = Math.cos(angle) * radius;
-            double z = Math.sin(angle) * radius;
+                double x = Math.cos(angle) * radius;
+                double z = Math.sin(angle) * radius;
 
-            Location spawn = center.clone().add(x, 80, z);
+                Location strike = center.clone().add(x, 0, z);
 
-            TNTPrimed tnt = (TNTPrimed) world.spawnEntity(spawn, EntityType.TNT);
-
-            // IMPORTANT FIX:
-            // don't force velocity (it breaks natural explosion timing)
-            tnt.setFuseTicks(60);
-
-            // stronger explosion = visible craters
-            tnt.setYield(6.5f);
+                // 💥 GUARANTEED EXPLOSION = NO TNT RELIABILITY ISSUES
+                world.createExplosion(
+                        strike,
+                        4.5f,   // power per strike
+                        true,   // block damage = CRATER ENABLED
+                        true    // fire
+                );
+            }
         }
+
+        // 💣 CORE CRATER (main impact)
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+
+            world.createExplosion(
+                    center,
+                    12f,   // BIG crater
+                    true,
+                    true
+            );
+
+        }, 20L);
     }
-
-    // BIG CENTER CRATER (this is what you were missing)
-    Bukkit.getScheduler().runTaskLater(this, () -> {
-
-        world.createExplosion(center, 12f, true, true);
-
-    }, 70L);
 }
