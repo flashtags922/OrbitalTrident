@@ -83,24 +83,39 @@ public void onTridentHit(ProjectileHitEvent event) {
     world.playSound(center, Sound.ENTITY_WITHER_SPAWN, 3.0f, 0.5f);
     world.strikeLightningEffect(center);
 
-    // MUCH LOWER ENTITY COUNT (performance safe)
-    for (int i = 0; i < 60; i++) {
+    int rings = 3;              // number of rings
+    int baseRadius = 6;         // starting radius
+    int tntPerRing = 18;        // LOW per ring = no lag
 
-        double angle = Math.toRadians(i * 6);
+    for (int r = 0; r < rings; r++) {
 
-        double radius = 10;
+        int radius = baseRadius + (r * 5);
 
-        double x = Math.cos(angle) * radius;
-        double z = Math.sin(angle) * radius;
+        for (int i = 0; i < tntPerRing; i++) {
 
-        Location spawn = center.clone().add(x, 100, z);
+            double angle = (2 * Math.PI / tntPerRing) * i;
 
-        TNTPrimed tnt = (TNTPrimed) world.spawnEntity(spawn, EntityType.TNT);
+            double x = Math.cos(angle) * radius;
+            double z = Math.sin(angle) * radius;
 
-        // faster + controlled explosion timing
-        tnt.setFuseTicks(80);
+            // spawn HIGH in the air (ensures real fall time)
+            Location spawn = center.clone().add(x, 90, z);
 
-        // slightly stronger per TNT
-        tnt.setYield(6f);
+            TNTPrimed tnt = (TNTPrimed) world.spawnEntity(spawn, EntityType.TNT);
+
+            // 💥 IMPORTANT FIX: force downward motion so it hits ground
+            tnt.setVelocity(new org.bukkit.util.Vector(0, -1.2, 0));
+
+            // enough fuse so it lands before exploding
+            tnt.setFuseTicks(100);
+
+            // slightly stronger but controlled
+            tnt.setYield(5.5f);
+        }
     }
+
+    // final impact blast (main nuke)
+    Bukkit.getScheduler().runTaskLater(this, () -> {
+        world.createExplosion(center, 9f, false, false);
+    }, 60L);
 }
