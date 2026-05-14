@@ -1,2 +1,0 @@
-# OrbitalTrident
-trident strike 
