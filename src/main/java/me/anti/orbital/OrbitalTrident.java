@@ -78,7 +78,7 @@ public class OrbitalTrident extends JavaPlugin implements Listener {
             TNTPrimed tnt = (TNTPrimed) world.spawnEntity(spawn, EntityType.TNT);
 
             // long fuse so it always hits ground first
-            tnt.setFuseTicks(999);
+            tnt.setFuseTicks(140);
 
             // stronger explosion
             tnt.setYield(10f);
