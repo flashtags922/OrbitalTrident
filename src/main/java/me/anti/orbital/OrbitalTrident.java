@@ -67,7 +67,8 @@ public class OrbitalTrident extends JavaPlugin implements Listener {
             double x = Math.cos(angle) * 5;
             double z = Math.sin(angle) * 5;
 
-            Location spawn = center.clone().add(x, 80, z);
+            // higher spawn so it looks like it's coming from orbit
+            Location spawn = center.clone().add(x, 120, z);
 
             TNTPrimed tnt =
                     (TNTPrimed) world.spawnEntity(
@@ -75,7 +76,9 @@ public class OrbitalTrident extends JavaPlugin implements Listener {
                             EntityType.TNT
                     );
 
-            tnt.setFuseTicks(60);
+            // longer fuse so TNT reaches ground first
+            tnt.setFuseTicks(140);
+
             tnt.setYield(8f);
         }
     }
