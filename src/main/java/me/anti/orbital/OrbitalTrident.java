@@ -12,12 +12,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class OrbitalTrident extends JavaPlugin implements Listener {
 
+    private NamespacedKey orbitalKey;
+
     @Override
     public void onEnable() {
+        orbitalKey = new NamespacedKey(this, "orbital_trident");
         getServer().getPluginManager().registerEvents(this, this);
     }
 
@@ -34,9 +38,15 @@ public class OrbitalTrident extends JavaPlugin implements Listener {
         Player player = (Player) sender;
 
         ItemStack trident = new ItemStack(Material.TRIDENT);
-
         ItemMeta meta = trident.getItemMeta();
+
         meta.setDisplayName("§cOrbital Trident");
+
+        meta.getPersistentDataContainer().set(
+                orbitalKey,
+                PersistentDataType.BYTE,
+                (byte) 1
+        );
 
         trident.setItemMeta(meta);
 
@@ -48,11 +58,20 @@ public class OrbitalTrident extends JavaPlugin implements Listener {
     @EventHandler
     public void onTridentHit(ProjectileHitEvent event) {
 
-        if (!(event.getEntity() instanceof Trident)) return;
+        if (!(event.getEntity() instanceof Trident trident)) return;
         if (event.getHitBlock() == null) return;
 
-        Location target = event.getHitBlock().getLocation();
+        ItemMeta meta = (ItemMeta) trident.getItemMeta();
+        if (meta == null) return;
 
+        Byte tag = meta.getPersistentDataContainer().get(
+                orbitalKey,
+                PersistentDataType.BYTE
+        );
+
+        if (tag == null || tag != 1) return;
+
+        Location target = event.getHitBlock().getLocation();
         spawnOrbitalStrike(target);
     }
 
@@ -63,7 +82,6 @@ public class OrbitalTrident extends JavaPlugin implements Listener {
         world.playSound(center, Sound.ENTITY_WITHER_SPAWN, 3.0f, 0.5f);
         world.strikeLightningEffect(center);
 
-        // BIG ORBITAL NUKE
         for (int i = 0; i < 200; i++) {
 
             double angle = Math.toRadians(i * 1.8);
@@ -77,10 +95,7 @@ public class OrbitalTrident extends JavaPlugin implements Listener {
 
             TNTPrimed tnt = (TNTPrimed) world.spawnEntity(spawn, EntityType.TNT);
 
-            // long fuse so it always hits ground first
             tnt.setFuseTicks(140);
-
-            // stronger explosion
             tnt.setYield(8f);
         }
     }
