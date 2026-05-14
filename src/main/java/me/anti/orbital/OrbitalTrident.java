@@ -81,7 +81,7 @@ public class OrbitalTrident extends JavaPlugin implements Listener {
             tnt.setFuseTicks(140);
 
             // stronger explosion
-            tnt.setYield(10f);
+            tnt.setYield(8f);
         }
     }
 }
