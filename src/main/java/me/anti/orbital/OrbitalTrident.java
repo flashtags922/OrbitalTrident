@@ -56,25 +56,26 @@ public class OrbitalTrident extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onTridentHit(ProjectileHitEvent event) {
+public void onTridentHit(ProjectileHitEvent event) {
 
-        if (!(event.getEntity() instanceof Trident trident)) return;
-        if (event.getHitBlock() == null) return;
+    if (!(event.getEntity() instanceof Trident)) return;
+    Trident trident = (Trident) event.getEntity();
 
-        ItemMeta meta = (ItemMeta) trident.getItemMeta();
-        if (meta == null) return;
+    if (event.getHitBlock() == null) return;
 
-        Byte tag = meta.getPersistentDataContainer().get(
-                orbitalKey,
-                PersistentDataType.BYTE
-        );
+    ItemMeta meta = trident.getItemStack().getItemMeta();
+    if (meta == null) return;
 
-        if (tag == null || tag != 1) return;
+    Byte tag = meta.getPersistentDataContainer().get(
+            orbitalKey,
+            PersistentDataType.BYTE
+    );
 
-        Location target = event.getHitBlock().getLocation();
-        spawnOrbitalStrike(target);
-    }
+    if (tag == null || tag != 1) return;
 
+    Location target = event.getHitBlock().getLocation();
+    spawnOrbitalStrike(target);
+}
     private void spawnOrbitalStrike(Location center) {
 
         World world = center.getWorld();
