@@ -23,30 +23,38 @@ public class OrbitalTrident extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+   @Override
+public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        if (!(sender instanceof Player)) return true;
+    if (!(sender instanceof Player)) return true;
 
-        Player player = (Player) sender;
+    Player player = (Player) sender;
 
-        ItemStack trident = new ItemStack(Material.TRIDENT);
-        ItemMeta meta = trident.getItemMeta();
-
-        meta.setDisplayName("§cOrbital Trident");
-
-        meta.getPersistentDataContainer().set(
-                orbitalKey,
-                PersistentDataType.BYTE,
-                (byte) 1
-        );
-
-        trident.setItemMeta(meta);
-
-        player.getInventory().addItem(trident);
-
+    // OP CHECK
+    if (!player.isOp()) {
+        player.sendMessage("§cOnly server operators can use this command.");
         return true;
     }
+
+    ItemStack trident = new ItemStack(Material.TRIDENT);
+    ItemMeta meta = trident.getItemMeta();
+
+    meta.setDisplayName("§cOrbital Trident");
+
+    meta.getPersistentDataContainer().set(
+            orbitalKey,
+            PersistentDataType.BYTE,
+            (byte) 1
+    );
+
+    trident.setItemMeta(meta);
+
+    player.getInventory().addItem(trident);
+
+    player.sendMessage("§aYou received an Orbital Trident!");
+
+    return true;
+}
 
     @EventHandler
     public void onTridentHit(ProjectileHitEvent event) {
