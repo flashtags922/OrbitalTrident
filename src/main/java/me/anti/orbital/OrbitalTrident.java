@@ -79,39 +79,34 @@ public boolean onCommand(CommandSender sender, Command command, String label, St
         spawnOrbitalStrike(target);
     }
 
-    private void spawnOrbitalStrike(Location center) {
+   private void spawnOrbitalStrike(Location center) {
 
-        World world = center.getWorld();
+    World world = center.getWorld();
 
-        // ⚡ effect start
-        world.playSound(center, Sound.ENTITY_WITHER_SPAWN, 3.0f, 0.6f);
-        world.strikeLightningEffect(center);
+    world.playSound(center, Sound.ENTITY_WITHER_SPAWN, 3.0f, 0.6f);
+    world.strikeLightningEffect(center);
 
-        int rings = 4;        // MORE rings
-        int density = 12;     // points per ring
+    int explosions = 12;
+    double radius = 10;
 
-        for (int r = 0; r < rings; r++) {
+    for (int i = 0; i < explosions; i++) {
 
-            double radius = 5 + (r * 4);
+        double angle = (2 * Math.PI / explosions) * i;
 
-            for (int i = 0; i < density; i++) {
+        double x = Math.cos(angle) * radius;
+        double z = Math.sin(angle) * radius;
 
-                double angle = (2 * Math.PI / density) * i;
+        Location strike = center.clone().add(x, 0, z);
 
-                double x = Math.cos(angle) * radius;
-                double z = Math.sin(angle) * radius;
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            world.createExplosion(strike, 4f, false, true);
+        }, i * 2L);
+    }
 
-                Location strike = center.clone().add(x, 0, z);
-
-                // 💥 GUARANTEED EXPLOSION = NO TNT RELIABILITY ISSUES
-                world.createExplosion(
-                        strike,
-                        4.5f,   // power per strike
-                        true,   // block damage = CRATER ENABLED
-                        true    // fire
-                );
-            }
-        }
+    Bukkit.getScheduler().runTaskLater(this, () -> {
+        world.createExplosion(center, 8f, false, true);
+    }, 30L);
+}
 
         // 💣 CORE CRATER (main impact)
         Bukkit.getScheduler().runTaskLater(this, () -> {
