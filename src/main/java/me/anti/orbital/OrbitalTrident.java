@@ -105,7 +105,8 @@ public boolean onCommand(CommandSender sender, Command command, String label, St
         }, delay);
     }
 
-    Bukkit.getScheduler().runTaskLater(this, () -> {
+       Bukkit.getScheduler().runTaskLater(this, () -> {
         world.createExplosion(center, 8f, false, true);
     }, 30L);
+}
 }
