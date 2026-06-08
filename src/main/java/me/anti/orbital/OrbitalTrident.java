@@ -79,7 +79,7 @@ public boolean onCommand(CommandSender sender, Command command, String label, St
         spawnOrbitalStrike(target);
     }
 
-   private void spawnOrbitalStrike(Location center) {
+  private void spawnOrbitalStrike(Location center) {
 
     World world = center.getWorld();
 
@@ -108,17 +108,4 @@ public boolean onCommand(CommandSender sender, Command command, String label, St
     Bukkit.getScheduler().runTaskLater(this, () -> {
         world.createExplosion(center, 8f, false, true);
     }, 30L);
-}
-        // 💣 CORE CRATER (main impact)
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-
-            world.createExplosion(
-                    center,
-                    12f,   // BIG crater
-                    true,
-                    true
-            );
-
-        }, 20L);
-    }
 }
