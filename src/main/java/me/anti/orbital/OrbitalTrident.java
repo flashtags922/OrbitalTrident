@@ -91,6 +91,8 @@ public boolean onCommand(CommandSender sender, Command command, String label, St
 
     for (int i = 0; i < explosions; i++) {
 
+        final int delay = i * 2;
+
         double angle = (2 * Math.PI / explosions) * i;
 
         double x = Math.cos(angle) * radius;
@@ -100,14 +102,13 @@ public boolean onCommand(CommandSender sender, Command command, String label, St
 
         Bukkit.getScheduler().runTaskLater(this, () -> {
             world.createExplosion(strike, 4f, false, true);
-        }, i * 2L);
+        }, delay);
     }
 
     Bukkit.getScheduler().runTaskLater(this, () -> {
         world.createExplosion(center, 8f, false, true);
     }, 30L);
 }
-
         // 💣 CORE CRATER (main impact)
         Bukkit.getScheduler().runTaskLater(this, () -> {
 
