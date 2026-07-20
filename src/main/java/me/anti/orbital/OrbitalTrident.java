@@ -105,3 +105,6 @@ public boolean onCommand(CommandSender sender, Command command, String label, St
         tnt.setYield(6f);
     }
 }
+
+    
+}
