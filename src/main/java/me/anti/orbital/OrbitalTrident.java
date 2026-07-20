@@ -12,6 +12,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.TNTPrimed;
 
 public class OrbitalTrident extends JavaPlugin implements Listener {
 
