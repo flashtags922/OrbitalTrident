@@ -79,34 +79,27 @@ public boolean onCommand(CommandSender sender, Command command, String label, St
         spawnOrbitalStrike(target);
     }
 
-  private void spawnOrbitalStrike(Location center) {
+ private void spawnOrbitalStrike(Location center) {
 
     World world = center.getWorld();
 
-    world.playSound(center, Sound.ENTITY_WITHER_SPAWN, 3.0f, 0.6f);
+    world.playSound(center, Sound.ENTITY_WITHER_SPAWN, 3.0f, 0.5f);
     world.strikeLightningEffect(center);
 
-    int explosions = 12;
-    double radius = 10;
+    for (int i = 0; i < 60; i++) {
 
-    for (int i = 0; i < explosions; i++) {
+        double angle = Math.toRadians(i * 6);
 
-        final int delay = i * 2;
-
-        double angle = (2 * Math.PI / explosions) * i;
+        double radius = 10;
 
         double x = Math.cos(angle) * radius;
         double z = Math.sin(angle) * radius;
 
-        Location strike = center.clone().add(x, 0, z);
+        Location spawn = center.clone().add(x, 100, z);
 
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            world.createExplosion(strike, 4f, false, true);
-        }, delay);
+        TNTPrimed tnt = (TNTPrimed) world.spawnEntity(spawn, EntityType.TNT);
+
+        tnt.setFuseTicks(80);
+        tnt.setYield(6f);
     }
-
-       Bukkit.getScheduler().runTaskLater(this, () -> {
-        world.createExplosion(center, 8f, false, true);
-    }, 30L);
-}
 }
